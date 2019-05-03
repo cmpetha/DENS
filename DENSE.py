@@ -106,7 +106,10 @@ def usr_input():
                     continue
         else:
             nKGB = []
-            
+        
+        ##YOU MAY WISH TO CHANGE THIS SECTION TO MAKE IT MORE RELEVANT FOR
+        ##YOUR OWN QUINTESSENCE POTENTIAL. MULTIPLE VALUES A FREE
+        ##PARAMETER CAN BE STUDIED AT ONCE, WHILE A SECOND IS REMAINED FIXED.
         while True:
              zc = input('Crossover Redshift, zc = ')
              if zc.replace(".", "", 1).isdigit():
@@ -157,15 +160,20 @@ def worker(j, eats, nKGB, zc, plots, KGB):   #
     ac = 1./(1.+zc)   ##Crossover scalefactor
     Vc = rhode0   ##Critical potential
     l = ((6.*Vc + 3.*rhom0*(1.+zc)**3.)/(2.*Vc))**0.5   ##model dependent constant
-    xc = (Mpl/l)*np.log(Mpl**4. / rhode0)   ##Critical field value                                          
+    xc = (Mpl/l)*np.log(Mpl**4. / rhode0)   ##Critical field value   
+        
+    ##STSQ INITIAL CONDITIONS - MUST BE CHANGED ON CHANGING QUINTESSENCE 
+    ##POTENTIAL                               
     xi = (Mpl/l)*np.log(((Mpl**4.)/(rhode0))*(ai/ac)**3.)   ##Initial field value                            
     yi = (2.*np.exp(np.log(Mpl**4.) - l*xi/Mpl))**0.5   ##Initial derivative
+    
+    Hi = ((rhom0*(ai**-3.)*ai + rhor0*(ai**-3.)) / (3. * (Mpl**2.)))**0.5
     xKi = xi
     yKi = yi/50.
-    ui = 0.075
-    vi = 2.87470*10**-42.
-    vil = vi#2.87496*10**-42.
-    viK = vi#2.88*10**-42.
+    ui = ai
+    vi = ai*Hi
+    vil = vi
+    viK = vi
     chi = np.zeros(6)
     if KGB == 'y':
 #        rc[j] = (((2.**(nKGB[j]-1.))/3.*nKGB[j])**(1./(2.*nKGB[j])))*\
@@ -195,6 +203,9 @@ def worker(j, eats, nKGB, zc, plots, KGB):   #
             
     def f(x, y, yK, u, v, ul, vl, uK, vK, a):   ##Calculates useful parameters                
         
+        
+        ##CHANGE THE FOLLOWING POTENTIAL TO CHANGE THE QUINTESSENCE MODEL
+        ##BEING STUDIED. N.B.ALSO CHANGE INITIAL CONDITIONS FUTHER UP
         def V(x):   ##Function for the STSQ potential and its derivative
                     ##Potetial can be changed for any Scalar Field model
             try:                                                                
