@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Main script for simualting Quintessence dark energy, and limited modelling 
-of Kinetic Gravity braiding.
+Script Used to check attractor solution in STSQ (KGB attractor in development)
+Only works with DENSEwin.py / plotswin.py
 
 @author: Charlie
 """
