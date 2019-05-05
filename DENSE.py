@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-DEsimulator
+DENSE
 
 Main script for simualting Quintessence dark energy, specfically a novel field
 named Sharp Transition Scaling Quintessence, and comparing this with LCDM and
