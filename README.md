@@ -10,5 +10,7 @@ Currently set up for a novel oscillating scalar field 'Sharp Transition Scaling 
 --- Requirements ---
 
 Packages - Numpy, Scipy, Multiprocessing
+
 Scripts - DENSE and plots in combination or DENSEwin and plotswin in combination
+
 Other - Latex package (texlive reccommended) required for plots. 'useTeX=True' can be commented out for use without Latex
