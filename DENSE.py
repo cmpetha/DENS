@@ -5,7 +5,7 @@ DENSE
 Main script for simualting Quintessence dark energy, specfically a novel field
 named Sharp Transition Scaling Quintessence, and comparing this with LCDM and
 a modified gravity model - Kinetic Gravity Braiding.
-
+Can be edited to model any Quintessene field.
 @author: Charlie Mpetha
 """
 
