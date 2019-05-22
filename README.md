@@ -1,5 +1,5 @@
 # DENSE
-Dark Energy: Numerically Simulated Evolution
+Dark Energy: Numerically Solved Evolution
 
 --- Description ---
 
