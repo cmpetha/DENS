@@ -21,7 +21,6 @@ import time
 from os import sys
 import numpy as np
 from plots2 import plot
-from scipy.optimize import fsolve
 from multiprocessing.pool import Pool
 from multiprocessing import Array
 from functools import partial
@@ -89,12 +88,11 @@ def usr_input():
     
     if test == 'y':
         
+        order = 1
         zc = 10   ##Crossover redshift
         A = [0.1, 1]  ##Different values of STSQ free parameter eta
-#        nKGB = [0] ##Different values of KGB free parameter n
+        B = [0, 0]
         plots = ['w']   ##Which plots to produce
-        #plots = ['g']
-#        KGB = 'n'   ##Wether KGB is modelled (increases runtime)
         
     else:
         
@@ -142,7 +140,7 @@ def usr_input():
         if order == 2. :         
             while True:  
                 try:
-                    input_B = input('Choose values of B. Seperate each choice with a space: \n')       
+                    input_B = input('Choose corresponding values of B. Seperate each choice with a space: \n')       
                     if input_B == 'exit':
                         sys.exit(0)
                     if all(x.replace(".", "", 1).replace("-", "", 1).isdigit() for x \
@@ -156,7 +154,7 @@ def usr_input():
                     continue
                 
         
-        input_string = input('Which graphs? Seperate each choice with a space. \n  Equation of State:"w" Hubble:"H"  Luminosity Distance:"dL"   Growth function:"g"  Field Value:"phi"  Potential:"V"  Deceleration Parameter:"q"  Scaling:"sc"  Gravitational Constant:"G"\n')
+        input_string = input('Which graphs? Seperate each choice with a space. \n  Equation of State:"w" Hubble:"H"  Luminosity Distance:"dL"   Growth function:"g"  Field Value:"phi"  Potential:"V"  Deceleration Parameter:"q"  Scaling:"sc"  Error Test:"Err"\n')
         
         plots = input_string.split()
         if any(val == 'exit' for val in plots):
@@ -248,7 +246,7 @@ def worker(j, A, B, zc, order, plots):   #
                 ##Return all parameters for use        
   
     
-    DATA = np.zeros((55,n))  ##Create temporary array to hold calculated data
+    DATA = np.zeros((NN,n))  ##Create temporary array to hold calculated data
     
     def intstep(x, y, a):    ##Performs 4th order RK integration to 
                                      ##solve scalar field equation and more
@@ -296,7 +294,8 @@ def worker(j, A, B, zc, order, plots):   #
             dv = (n0 + 2.*n1 + 2.*n2 + n3)/6.   ##its derivative stepsize
             
    
-            DATA[0,i] = 0.0013/a   ##Saving all relevant information to DATA
+            DATA[0,i] = ((x-xc)/Mpl)
+            #DATA[0,i] = (B[j]*((x-xc)/Mpl)**2.)/(1. + A[j]*(x-xc)/Mpl)
             DATA[1,i] = a
             DATA[2,i] = z
             DATA[3,i] = Hl
@@ -314,7 +313,7 @@ def worker(j, A, B, zc, order, plots):   #
             DATA[15,i] = abs((H-Hl)/Hl)
             DATA[16,i] = q
             DATA[17,i] = ODE
-            DATA[18,i] = np.log10((0.5*(y**2.))/V)
+            DATA[18,i] = 0#np.log10((0.5*(y**2.))/V)
             DATA[19,i] = 0
             DATA[20,i] = 0
             DATA[21,i] = 0

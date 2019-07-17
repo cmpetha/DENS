@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-DENSE
+DEsimulator
 
 Main script for simualting Quintessence dark energy, specfically a novel field
 named Sharp Transition Scaling Quintessence, and comparing this with LCDM and
 a modified gravity model - Kinetic Gravity Braiding.
-Can be edited to model any Quintessene field.
+
 @author: Charlie Mpetha
 """
 
@@ -40,8 +40,8 @@ rhode0 =  OmegaDE0*rhoc0   ##Current dark energy energy density
 rhom0 = OmegaM0*rhoc0   ##Current matter energy density                
 rhor0 = OmegaR0*rhoc0   ##Current raditation energy density
 sig80 = 0.806   ##simga_8,0 DES+Planck 2018          
-ai = 0.075   ##Initial scale factor
-da = 0.001   ##Scale factor step size
+ai = 0.02  ##Initial scale factor
+da = 0.00001   ##Scale factor step size
 n = int((1-ai)/da+1)   ##Number of steps in the integration
 NN = 55
 Vc = rhode0   ##Critical potential
@@ -60,7 +60,6 @@ def initarr():
     xnum = NN*max(len(eats),len(nKGB))   ##Number of rows in array
     sharedDATA = Array('d', range(xnum*n), lock=False)   
     ##Multiprocessing Array, can be written to by each worker
-                                                          
     
     return sharedDATA, eats, nKGB, zc, plots, KGB   ###Return all parameters
 
@@ -108,10 +107,10 @@ def usr_input():
             nKGB = []
         
         ##YOU MAY WISH TO CHANGE THIS SECTION TO MAKE IT MORE RELEVANT FOR
-        ##YOUR OWN QUINTESSENCE POTENTIAL. MULTIPLE VALUES A FREE
+        ##YOUR OWN QUINTESSENCE POTENTIAL. MULTIPLE VALUES OF A FREE
         ##PARAMETER CAN BE STUDIED AT ONCE, WHILE A SECOND IS REMAINED FIXED.
         while True:
-             zc = input('Crossover Redshift, zc = ')
+             zc = input('Crossover Redshift (max = 49), zc = ')
              if zc.replace(".", "", 1).isdigit():
                  zc = float(zc)
                  break
@@ -130,7 +129,7 @@ def usr_input():
             except ValueError:
                 continue
             
-        input_string = input('Which graphs? Seperate each choice with a space. \n  Equation of State:"w" Hubble:"H"  Luminosity Distance:"dL"   Growth function:"g"  Field Value:"phi"  Potential"V"  Deceleration Parameter"q"  Scaling:"sc"  Gravitational Constant:"G"\n')
+        input_string = input('Which graphs? Seperate each choice with a space. \n  Equation of State:"w" Hubble:"H"  Luminosity Distance:"dL"   Growth function:"g"  Field Value:"phi"  Potential:"V"  Deceleration Parameter:"q"  Scaling:"sc"  Gravitational Constant:"G"\n')
         
         plots = input_string.split()
         if any(val == 'exit' for val in plots):
@@ -150,8 +149,7 @@ def usr_input():
 ##value of eta for STSQ or n for KGB. This setup allows each different model
 ##to be simulated simuLtaneously - making use of available computing power and saving time.
 
-zpoints = []  
-fpoints = []
+
     
 def worker(j, eats, nKGB, zc, plots, KGB):   #
     #Create loop over all code so that it can be parallelised  
@@ -270,7 +268,6 @@ def worker(j, eats, nKGB, zc, plots, KGB):   #
                 ##Return all parameters for use        
   
     
-    
     DATA = np.zeros((55,n))  ##Create temporary array to hold calculated data
     
     def intstep(x, y, xK, yK, a):    ##Performs 4th order RK integration to 
@@ -368,14 +365,7 @@ def worker(j, eats, nKGB, zc, plots, KGB):   #
                 gl2 = ul/a   ##LCDM growth function from density pertuabtion
                 fzl = (dul*a)/(da*ul)   ##f(z)
                 gLCDM = (np.log(fzl))/(np.log(OMl))   #gamma for LCDM
-                
-                if j == 0:   ##For Euclid f plot error bars
-                    zarr = [0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0]
-                    Narr = [int((-ai+(1+zarr[jjj])**-1.)/da) for jjj, x in enumerate(zarr)]
-                    if any(Nval == i for Nval in Narr):
-                        zpoints.append(z)
-                        fpoints.append(fzl)
-                    
+                          
                 g = u/a   ##STSQ growth function from density pertuabtion
                 fz = (du*a)/(da*u)
                 gSTSQ = (np.log(fz))/(np.log(OM))   #gamma for STSQ
@@ -557,7 +547,7 @@ def main():
     
     data = np.asarray(sharedDATA).reshape((xnum,n))
     
-    plot(plots, xc, Vc, zc, eats, nKGB, KGB, data, NN, zpoints, fpoints)
+    plot(plots, xc, Vc, zc, ai, da, eats, nKGB, KGB, data, NN)
     
     end = time.time()
     

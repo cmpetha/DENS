@@ -7,13 +7,11 @@ Created on Sat Dec 22 16:50:16 2018
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.pylab as pl
-import matplotlib.ticker as mticker
-import numpy as np
 
-def plot(plots, xc, Vc, zc, eats, nKGB, KGB, DATA, NN, zpoints, fpoints):
+def plot(plots, xc, Vc, zc, ai, da, eats, nKGB, KGB, DATA, NN):
     
     
-    plt.rc('text', usetex=True)
+    #plt.rc('text', usetex=True)
     plt.rc('font', family='serif')
     plt.rc('axes', labelsize=16)
     plt.rc('axes', titlesize=18)
@@ -25,7 +23,7 @@ def plot(plots, xc, Vc, zc, eats, nKGB, KGB, DATA, NN, zpoints, fpoints):
         fig1 = plt.figure(1)
         ax1 = fig1.add_subplot(111)
         plt.hlines(-1, 0, DATA[2,0], label='$\Lambda$CDM', linewidth=0.85, color='k', linestyle=lines[0])
-        plt.xlim(left=0, right=DATA[2,0])
+        plt.xlim(left=0, right=zc+3)
         #plt.ylim(top=-0.8)
         plt.xlabel('$z$')
         plt.ylabel('$ w $')
@@ -39,7 +37,7 @@ def plot(plots, xc, Vc, zc, eats, nKGB, KGB, DATA, NN, zpoints, fpoints):
 #        plt.fill_between(DATA[2], -1.08, -0.9, where=DATA[2] <= 0.2, edgecolor='none', \
 #                         label='\emph{DES} WL + \emph{Planck} CMB + SN \n + BAO $2\sigma$ constraint', \
 #                         alpha=0.25, facecolor='b', zorder=len(eats)+2)
-        plt.legend(frameon=False, fontsize=14, loc=2)
+        plt.legend(frameon=False, fontsize=15)
         #plt.legend(loc=3, bbox_to_anchor=(0.4,0.06), frameon=False, fontsize=13)
         ax1.tick_params(axis='both', direction='in')
         plt.savefig('w.png', dpi=500, format='png')
@@ -56,11 +54,13 @@ def plot(plots, xc, Vc, zc, eats, nKGB, KGB, DATA, NN, zpoints, fpoints):
                 plt.plot(DATA[2], DATA[21+NN*i], label='\emph{{KGB}}  $n={0}$'.format(nKGB[i]), \
                          linewidth=0.85, color=colors[len(eats)+2+2*i])
         plt.plot(DATA[2], DATA[3], label='$\Lambda$CDM', linewidth=0.85, color='k')
-        plt.xlim(left=0, right=DATA[2,0])
+        plt.xlim(left=0, right=zc+3)
+        plt.ylim(bottom=0 ,top=DATA[3,int(((1/(zc+5))-ai)/da)])
         plt.xlabel('$z$')
-        plt.ylabel('$H$ [GeV]')
+        plt.ylabel('$H$ [$GeV$]')
         plt.legend(frameon=False, fontsize='small')
         ax2.tick_params(axis='both', direction='in')
+        format_label_string_with_exponent(ax2, axis='both')
         plt.savefig('H.png', dpi=500, format='png')
  
         fig15 = plt.figure(15)
@@ -72,7 +72,7 @@ def plot(plots, xc, Vc, zc, eats, nKGB, KGB, DATA, NN, zpoints, fpoints):
             for i in range(len(nKGB)):
                 plt.plot(DATA[2], DATA[23+NN*i], color=colors[len(eats)+2+2*i], \
                          label='\emph{{KGB}}  $n={0}$'.format(nKGB[i]), linewidth=0.85, linestyle=lines[len(eats)+1+i])
-        plt.xlim(left=0, right=DATA[2,0])
+        plt.xlim(left=0, right=zc+3)
         plt.ylim(bottom=0)
         plt.xlabel('$z$')
         plt.ylabel('$ \mid \Delta H / H_{\Lambda} \mid$')
@@ -80,7 +80,9 @@ def plot(plots, xc, Vc, zc, eats, nKGB, KGB, DATA, NN, zpoints, fpoints):
         ax15.tick_params(axis='both', direction='in')
         plt.savefig('Hdiff.png', dpi=500, format='png')
     
-    ##dL plot    
+    ##dL plot   
+    ##dL Redshift
+    dLred = 2
     if any(string == 'dL' for string in plots):
         fig4 = plt.figure(4)
         ax4 = fig4.add_subplot(111)
@@ -92,12 +94,13 @@ def plot(plots, xc, Vc, zc, eats, nKGB, KGB, DATA, NN, zpoints, fpoints):
             for i in range(len(nKGB)):
                 plt.plot(DATA[2], DATA[49+NN*i], label='\emph{{KGB}}  $n={0}$'.format(nKGB[i]), \
                          linewidth=0.85, color=colors[len(eats)+2+2*i], linestyle=lines[len(eats)+1+i])
-        plt.xlim(left=0, right=0.5)
-        plt.ylim(bottom=0, top=3*10**42.)
+        plt.xlim(left=0, right=dLred)
+        plt.ylim(bottom=0 ,top=DATA[51,int(((1/(dLred+2))-ai)/da)])
         plt.xlabel('$z$')
-        plt.ylabel('$d_L$\ [GeV]')
+        plt.ylabel('$d_L$\ [$GeV$]')
         plt.legend(frameon=False, fontsize='small')
         ax4.tick_params(axis='both', direction='in')
+        format_label_string_with_exponent(ax4, axis='both')
         plt.savefig('dL.png', dpi=500, format='png')
         
         fig5 = plt.figure(5)
@@ -117,10 +120,11 @@ def plot(plots, xc, Vc, zc, eats, nKGB, KGB, DATA, NN, zpoints, fpoints):
 #                   label='Current SN constraint on \n $\Lambda$CDM deviation')
         plt.xlim(left=0, right=2)
         plt.ylim(bottom=0)
-        plt.xlabel('$z$')
-        plt.ylabel('$\mid \Delta d_L / d_{L,\Lambda} \mid$ [$GeV$]')
+        plt.xlabel('$z$', fontsize=18)
+        plt.ylabel('$\mid \Delta d_L / d_{L,\Lambda} \mid$', fontsize=18)
         plt.legend(frameon=False, fontsize=12)
-        ax5.tick_params(axis='both', direction='in')
+        ax5.tick_params(axis='both', direction='in', labelsize=14)
+        plt.tight_layout()
         plt.savefig('dLdiff.png', dpi=500, format='png')   
         
     ##growth function plot
@@ -143,30 +147,28 @@ def plot(plots, xc, Vc, zc, eats, nKGB, KGB, DATA, NN, zpoints, fpoints):
         plt.savefig('g.png', dpi=500, format='png')
         
         
-        
-        
-        yerrpoints = [0.046, 0.034, 0.028, 0.028, 0.024, 0.022, 0.02, 0.02, \
-                      0.018, 0.018, 0.018, 0.018, 0.02, 0.022]
-        fig21 = plt.figure(21)
-        ax21 = fig21.add_subplot(111)
-        for j in range(len(eats)):
-            plt.plot(DATA[2], DATA[37+NN*j], color=colors[2*j+2], linestyle=lines[1+j],\
-                     label='\emph{{STSQ}}  $z_c={0}$ $\eta={1}$'.format(zc, eats[j]), linewidth=0.85)
-        for i in range(len(nKGB)):
-            plt.plot(DATA[2], DATA[38+NN*i], label='\emph{{KGB}}  $n={0}$'.format(nKGB[i]), \
-                     linewidth=0.85, color=colors[len(eats)+2+2*i], linestyle=lines[len(eats)+1+i])
-        plt.plot(DATA[2], DATA[42], color='k', label='$\Lambda$CDM', linewidth=0.85)
-        plt.xlim(left=0, right=2.1)
-        plt.text(0.1, 0.95, '$f = \Omega_{m}^{\\gamma}$', fontsize=14)
-        plt.errorbar(zpoints, fpoints, yerr=yerrpoints,fmt='none',ecolor='k',\
-                     elinewidth=0.75, capthick=0.5, capsize=1.5,\
-                     label='Euclid Forecasted $2\sigma$ Error')
-        #plt.ylim(bottom=0.7)
-        plt.xlabel('$z$')
-        plt.ylabel('$f$')
-        plt.legend(frameon=False, fontsize=14)
-        ax21.tick_params(axis='both', direction='in')
-        plt.savefig('f.png', dpi=500, format='png')       
+#        yerrpoints = [0.046, 0.034, 0.028, 0.028, 0.024, 0.022, 0.02, 0.02, \
+#                      0.018, 0.018, 0.018, 0.018, 0.02, 0.022]
+#        fig21 = plt.figure(21)
+#        ax21 = fig21.add_subplot(111)
+#        for j in range(len(eats)):
+#            plt.plot(DATA[2], DATA[37+NN*j], color=colors[2*j+2], linestyle=lines[1+j],\
+#                     label='\emph{{STSQ}}  $z_c={0}$ $\eta={1}$'.format(zc, eats[j]), linewidth=0.85)
+#        for i in range(len(nKGB)):
+#            plt.plot(DATA[2], DATA[38+NN*i], label='\emph{{KGB}}  $n={0}$'.format(nKGB[i]), \
+#                     linewidth=0.85, color=colors[len(eats)+2+2*i], linestyle=lines[len(eats)+1+i])
+#        plt.plot(DATA[2], DATA[42], color='k', label='$\Lambda$CDM', linewidth=0.85)
+#        plt.xlim(left=0, right=2.1)
+#        plt.text(0.1, 0.95, '$f = \Omega_{m}^{\\gamma}$', fontsize=14)
+#        plt.errorbar(zpoints, fpoints, yerr=yerrpoints,fmt='none',ecolor='k',\
+#                     elinewidth=0.75, capthick=0.5, capsize=1.5,\
+#                     label='Euclid Forecasted $2\sigma$ Error')
+#        #plt.ylim(bottom=0.7)
+#        plt.xlabel('$z$')
+#        plt.ylabel('$f$')
+#        plt.legend(frameon=False, fontsize=14)
+#        ax21.tick_params(axis='both', direction='in')
+#        plt.savefig('f.png', dpi=500, format='png')       
         
         fig7 = plt.figure(7)
         ax7 = fig7.add_subplot(111)
@@ -186,11 +188,11 @@ def plot(plots, xc, Vc, zc, eats, nKGB, KGB, DATA, NN, zpoints, fpoints):
 #        plt.hlines(0.56045454545, 0, 3, color='b', linewidth=0.85)
 #        plt.hlines(0.57545454545, 0, 3, label='$WFIRST$ Aggregate Precision $2\sigma$', linewidth=0.85, color='g')
 #        plt.hlines(0.51545454545, 0, 3, linewidth=0.85, color='g')
-        plt.xlim(left=0, right=DATA[2,0])
+        plt.xlim(left=0, right=zc+5)
         #plt.ylim(bottom=0.545, top=0.5555)
         plt.xlabel('$z$')
         plt.ylabel('$\gamma$')
-        plt.legend(frameon=False, fontsize=10, loc=2)
+        plt.legend(frameon=False, fontsize=12)
         ax7.tick_params(axis='both', direction='in')
         plt.savefig('gamma.png', dpi=500, format='png')
         
@@ -215,25 +217,25 @@ def plot(plots, xc, Vc, zc, eats, nKGB, KGB, DATA, NN, zpoints, fpoints):
         ax13.tick_params(axis='both', direction='in')
         plt.savefig('gdiff.png', dpi=500, format='png')
 
-        fig19 = plt.figure(19)
-        ax19 = fig19.add_subplot(111)
-        plt.plot([], [], ' ', label='Linder and Numerical Fractional Difference')
-        plt.plot(DATA[2], DATA[40], color='k', label= '$\Lambda$CDM', linewidth=0.85)
-        for j in range(len(eats)):
-            plt.plot(DATA[2], DATA[36+NN*j], color=colors[2*j+2], linestyle=lines[1+j], \
-                     label='\emph{{STSQ}}  $z_c={0}$ $\eta={1}$'.format(zc, eats[j]), linewidth=0.85)
-        for i in range(len(nKGB)):
-            plt.plot(DATA[2], DATA[35+NN*i], label='\emph{{KGB}}  $n={0}$'.format(nKGB[i]), \
-                     linewidth=0.85, color=colors[len(eats)+2+2*i], linestyle=lines[len(eats)+1+i])
-        plt.xlim(left=0, right=DATA[2,0])
-        plt.xlabel('$z$')
-        plt.ylabel('$\Delta g$')
-        plt.legend(frameon=False, fontsize=14)
-        ax19.tick_params(axis='both', direction='in')
-        formatter = mticker.ScalarFormatter(useOffset=False)
-        ax19.yaxis.set_major_formatter(formatter)
-        plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-        plt.savefig('gdiff2.png', dpi=500, format='png')
+#        fig19 = plt.figure(19)
+#        ax19 = fig19.add_subplot(111)
+#        plt.plot([], [], ' ', label='Linder and Numerical Fractional Difference')
+#        plt.plot(DATA[2], DATA[40], color='k', label= '$\Lambda$CDM', linewidth=0.85)
+#        for j in range(len(eats)):
+#            plt.plot(DATA[2], DATA[36+NN*j], color=colors[2*j+2], linestyle=lines[1+j], \
+#                     label='\emph{{STSQ}}  $z_c={0}$ $\eta={1}$'.format(zc, eats[j]), linewidth=0.85)
+#        for i in range(len(nKGB)):
+#            plt.plot(DATA[2], DATA[35+NN*i], label='\emph{{KGB}}  $n={0}$'.format(nKGB[i]), \
+#                     linewidth=0.85, color=colors[len(eats)+2+2*i], linestyle=lines[len(eats)+1+i])
+#        plt.xlim(left=0, right=DATA[2,0])
+#        plt.xlabel('$z$')
+#        plt.ylabel('$\Delta g$')
+#        plt.legend(frameon=False, fontsize=14)
+#        ax19.tick_params(axis='both', direction='in')
+#        formatter = mticker.ScalarFormatter(useOffset=False)
+#        ax19.yaxis.set_major_formatter(formatter)
+#        plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+#        plt.savefig('gdiff2.png', dpi=500, format='png')
 
         
 #        fig14 = plt.figure(14)
@@ -306,9 +308,10 @@ def plot(plots, xc, Vc, zc, eats, nKGB, KGB, DATA, NN, zpoints, fpoints):
         plt.xlim(left=DATA[1,0], right=1)
         #plt.ylim(bottom=2.26*10**19, top=2.3*10**19)
         plt.xlabel('$a$')
-        plt.ylabel('$\phi$ [$GeV^{1/2}$]')
+        plt.ylabel('$\phi$ [$GeV$]')
         plt.legend(frameon=False, fontsize=14)
         ax11.tick_params(axis='both', direction='in')
+        format_label_string_with_exponent(ax11, axis='both')
         plt.savefig('phi.png', dpi=500, format='png')
 
         
@@ -326,6 +329,7 @@ def plot(plots, xc, Vc, zc, eats, nKGB, KGB, DATA, NN, zpoints, fpoints):
         plt.ylabel('$V$ [$GeV^{4}$]')
         plt.legend(frameon=False, fontsize=14)
         ax12.tick_params(axis='both', direction='in')
+        format_label_string_with_exponent(ax12, axis='both')
         plt.savefig('V.png', dpi=500, format='png')
 
         
@@ -370,35 +374,13 @@ def plot(plots, xc, Vc, zc, eats, nKGB, KGB, DATA, NN, zpoints, fpoints):
         for j in range(len(eats)):
             plt.plot(DATA[2], DATA[27+NN*j], color=colors[2*j+2], linestyle=lines[1+j], \
                      label='\emph{{STSQ}}  $z_c={0}$ $\eta={1}$'.format(zc, eats[j]), linewidth=0.85)
-        plt.xlim(left=0, right=DATA[2,0])
+        plt.xlim(left=0, right=zc+3)
         plt.xlabel('$z$')
         plt.ylabel('$\\xi$')
         plt.legend(frameon=False, fontsize=14)
         ax18.tick_params(axis='both', direction='in')
         plt.savefig('scaling.png', dpi=500, format='png')
 
-
-#    if any(string == 'att' for string in plots):
-#        fig22 = plt.figure(22)
-#        ax22 = fig22.add_subplot(111)
-#        for j in range(len(eats)):
-#            plt.plot(DATA[3+(j+1)*DEL], DATA[19+(j+1)*DEL],linewidth=0.85, color=colors[2*j+2])
-#        plt.xlabel('$V(\phi)$')
-#        plt.ylabel('$\dot{\phi}^2$')
-#        #plt.legend(frameon=False, fontsize='small')
-#        ax22.tick_params(axis='both', direction='in')
-#        plt.savefig('attractorSTSQ.png', dpi=500, format='png')
-#
-#        fig23 = plt.figure(23)
-#        ax23 = fig23.add_subplot(111)
-#        for j in range(len(nKGB)):
-#            plt.plot(DATA[21+(j+1)*DEL], DATA[27+(j+1)*DEL],linewidth=0.85, color=colors[2*j+2])
-#        plt.xlabel('$H^{-1}$')
-#        plt.ylabel('$\dot{\phi}$')
-#        #plt.legend(frameon=False, fontsize='small')
-#        ax23.tick_params(axis='both', direction='in')
-#        plt.savefig('attractorKGB.png', dpi=500, format='png')
-        
         
     if any(string == 'G' for string in plots):  
       
@@ -414,3 +396,37 @@ def plot(plots, xc, Vc, zc, eats, nKGB, KGB, DATA, NN, zpoints, fpoints):
         plt.legend(frameon=False, fontsize=14)
         ax23.tick_params(axis='both', direction='in')
         plt.savefig('Geff.png', dpi=500, format='png')
+        
+        
+        
+def update_label(old_label, exponent_text):
+    if exponent_text == "":
+        return old_label
+    
+    try:
+        units = old_label[old_label.index("[") + 1:old_label.rindex("]")]
+    except ValueError:
+        units = ""
+    label = old_label.replace("[{0}]".format(units), "")
+    
+    exponent_text = exponent_text.replace("\\times", "")
+    
+    return "{0} [{1} {2}]".format(label, exponent_text, units)
+    
+def format_label_string_with_exponent(ax, axis='both'):  
+    """ Format the label string with the exponent from the ScalarFormatter """
+    ax.ticklabel_format(axis=axis, style='sci')
+
+    axes_instances = []
+    if axis in ['x', 'both']:
+        axes_instances.append(ax.xaxis)
+    if axis in ['y', 'both']:
+        axes_instances.append(ax.yaxis)
+    
+    for ax in axes_instances:
+        ax.major.formatter._useTex = True
+        plt.draw() # Update the text
+        exponent_text = ax.get_offset_text().get_text()
+        label = ax.get_label().get_text()
+        ax.offsetText.set_visible(False)
+        ax.set_label_text(update_label(label, exponent_text))
