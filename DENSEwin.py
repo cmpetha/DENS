@@ -10,7 +10,7 @@ a modified gravity model - Kinetic Gravity Braiding.
 import time
 from os import sys
 import numpy as np
-from plots import plot
+from plotswin import plot
 from scipy.optimize import fsolve
 from multiprocessing.pool import ThreadPool as Pool
 
