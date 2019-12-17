@@ -7,6 +7,8 @@ Script to numerically solve the scalar field equation for a quintessence field, 
 
 Currently set up for a novel oscillating scalar field 'Sharp Transition Scaling Quintessence'. This can be modified by changing the potential and its derivatve, and chosing appropriate initial conditions. The locations of each is clearly labelled in the script.
 
+Email for more information on the output of these scripts
+
 --- Requirements ---
 
 Packages - Numpy, Scipy, Multiprocessing
