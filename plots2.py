@@ -10,6 +10,8 @@ Created on Tue Jul  9 14:18:14 2019
 """
 Created on Sat Dec 22 16:50:16 2018
 
+Plotting Script working with DENSE
+
 @author: Charlie
 """
 import numpy as np
@@ -18,11 +20,12 @@ import matplotlib.pylab as pl
 
 def plot(plots, xc, Vc, zc, ai, da, A, B, order, DATA, NN):
     
-    
-    plt.rc('text', usetex=True)
+    ##Setting fontsizes, colours and labels
+    plt.rc('text', usetex=True)   ##Can be commented out to avoid latex errors
     plt.rc('font', family='serif')
     plt.rc('axes', labelsize=16)
     plt.rc('axes', titlesize=18)
+    plt.legend(fontsize=20)
     colorsa = pl.cm.magma(np.linspace(0,1,2*(len(A)+2)))
     colors = colorsa[::-1]
     lines = ['-', '--', '-.', ':', '--', '-.', ':', '--', '-.', ':', '--', '-.', ':']
@@ -37,7 +40,7 @@ def plot(plots, xc, Vc, zc, ai, da, A, B, order, DATA, NN):
             lab1[j] = 'A $\;$ $\\vert$  B'
             lab2[j] = '{0:.1f} $\\vert$ {1:.1f}'.format(A[j], B[j])
        
-
+##Plotting equation of state
     if any(string == 'w' for string in plots):
         fig1 = plt.figure(1)
         ax1 = fig1.add_subplot(111)
@@ -71,9 +74,10 @@ def plot(plots, xc, Vc, zc, ai, da, A, B, order, DATA, NN):
     if any(string == 'H' for string in plots):
         fig2 = plt.figure(2)
         ax2 = fig2.add_subplot(111)
+        plt.plot([], [], ' ', label=lab1[j])
         for j in range(len(A)):
             plt.plot(DATA[2], DATA[12+NN*j], color=colors[2*j+2], \
-                     label='$z_c={0}$ $A={1}$ $B={2}$'.format(zc, A[j], B[j]), linewidth=0.85)
+                     label=lab2[j], linewidth=0.85)
         plt.plot(DATA[2], DATA[3], label='$\Lambda$CDM', linewidth=0.85, color='k')
         plt.xlim(left=0, right=zc+3)
         plt.ylim(bottom=0 ,top=DATA[3,int(((1/(zc+5))-ai)/da)])
@@ -86,13 +90,14 @@ def plot(plots, xc, Vc, zc, ai, da, A, B, order, DATA, NN):
  
         fig15 = plt.figure(15)
         ax15 = fig15.add_subplot(111)
+        plt.plot([], [], ' ', label=lab1[j])
         for j in range(len(A)):
             if B[j] == 0. and order == 2:
                 line_temp = lines[0]
             else:
                 line_temp = lines[1+j]
             plt.plot(DATA[2], DATA[15+NN*j], color=colors[2*j+2], linestyle = line_temp, \
-                     label=lab[j], linewidth=0.85)
+                     label=lab2[j], linewidth=0.85)
         plt.xlim(left=0, right=zc+3)
         plt.ylim(bottom=0)
         plt.xlabel('$z$')
@@ -107,6 +112,7 @@ def plot(plots, xc, Vc, zc, ai, da, A, B, order, DATA, NN):
     if any(string == 'dL' for string in plots):
         fig4 = plt.figure(4)
         ax4 = fig4.add_subplot(111)
+        plt.plot([], [], ' ', label=lab1[j])
         for j in range(len(A)):
             plt.plot(DATA[2], DATA[50+NN*j], color=colors[2*j+2],linestyle=lines[1+j], \
                     label=lab2[j], linewidth=0.85)
@@ -131,8 +137,8 @@ def plot(plots, xc, Vc, zc, ai, da, A, B, order, DATA, NN):
                 line_temp = lines[1+j]
             plt.plot(DATA[2], DATA[52+NN*j], color=colors[2*j+2], linestyle=lines[1+j],\
                      label=lab2[j], linewidth=0.85)      
-        plt.hlines(0.0018, 0, DATA[2,0], label='$WFIRST$ Aggregate Precision $1\sigma$', linewidth=0.85, color='b')
-        plt.hlines(0.0036, 0, DATA[2,0], label='$WFIRST$ Aggregate Precision $2\sigma$', linewidth=0.85, color='g')
+#        plt.hlines(0.0018, 0, DATA[2,0], label='$WFIRST$ Aggregate Precision $1\sigma$', linewidth=0.85, color='b')
+#        plt.hlines(0.0036, 0, DATA[2,0], label='$WFIRST$ Aggregate Precision $2\sigma$', linewidth=0.85, color='g')
 #        plt.hlines(0.02, 0, 0.4, linewidth=0.85, color='c')
 #        plt.hlines(0.005, 0.4, 0.6, linewidth=0.85, color='c')
 #        plt.hlines(0.02, 0.6, DATA[2,0], linewidth=0.85, color='c', \
@@ -147,21 +153,21 @@ def plot(plots, xc, Vc, zc, ai, da, A, B, order, DATA, NN):
         plt.savefig('dLdiff.png', dpi=500, format='png')   
         
     ##growth function plot
-    if any(string == 'g' for string in plots):
-        fig6 = plt.figure(6)
-        ax6 = fig6.add_subplot(111)
-        for j in range(len(A)):
-            plt.plot(DATA[2], DATA[29+NN*j], color=colors[2*j+2], linestyle=lines[1+j],\
-                     label=lab[j], linewidth=0.85)
-        plt.plot(DATA[2], DATA[39], color='k', label='$\Lambda$CDM', linewidth=0.85)
-        plt.xlim(left=0, right=3)
-        #plt.ylim(bottom=0.7)
-        plt.xlabel('$z$')
-        plt.ylabel('$g(z)$')
-        plt.legend(frameon=False, fontsize=14)
-        ax6.tick_params(axis='both', direction='in')
-        plt.savefig('g.png', dpi=500, format='png')
-        
+#    if any(string == 'g' for string in plots):
+#        fig6 = plt.figure(6)
+#        ax6 = fig6.add_subplot(111)
+#        for j in range(len(A)):
+#            plt.plot(DATA[2], DATA[29+NN*j], color=colors[2*j+2], linestyle=lines[1+j],\
+#                     label=lab[j], linewidth=0.85)
+#        plt.plot(DATA[2], DATA[39], color='k', label='$\Lambda$CDM', linewidth=0.85)
+#        plt.xlim(left=0, right=3)
+#        #plt.ylim(bottom=0.7)
+#        plt.xlabel('$z$')
+#        plt.ylabel('$g(z)$')
+#        plt.legend(frameon=False, fontsize=14)
+#        ax6.tick_params(axis='both', direction='in')
+#        plt.savefig('g.png', dpi=500, format='png')
+#        
         
 #        yerrpoints = [0.046, 0.034, 0.028, 0.028, 0.024, 0.022, 0.02, 0.02, \
 #                      0.018, 0.018, 0.018, 0.018, 0.02, 0.022]
@@ -186,42 +192,42 @@ def plot(plots, xc, Vc, zc, ai, da, A, B, order, DATA, NN):
 #        ax21.tick_params(axis='both', direction='in')
 #        plt.savefig('f.png', dpi=500, format='png')       
         
-        fig7 = plt.figure(7)
-        ax7 = fig7.add_subplot(111)
-        plt.hlines(0.54545454545, 0, DATA[2,0], color='k', label='$\Lambda$CDM Linder', linewidth=0.85)
-        plt.plot(DATA[2], DATA[41], color='c', label='$\Lambda$CDM Numerical', linewidth=0.85)
-        for j in range(len(A)):
-            plt.plot(DATA[2], DATA[28+NN*j], color=colors[2*j+2],\
-                     label='Numerical $z_c={0}$ $A={1} B={2}$'.format(zc, A[j], B[j]), linewidth=0.85)
-#        plt.hlines(0.530454545450, 0, 3, color='b', label='$WFIRST$ Aggregate Precision $1\sigma$', linewidth=0.85)
-#        plt.hlines(0.56045454545, 0, 3, color='b', linewidth=0.85)
-#        plt.hlines(0.57545454545, 0, 3, label='$WFIRST$ Aggregate Precision $2\sigma$', linewidth=0.85, color='g')
-#        plt.hlines(0.51545454545, 0, 3, linewidth=0.85, color='g')
-        plt.xlim(left=0, right=zc+5)
-        #plt.ylim(bottom=0.545, top=0.5555)
-        plt.xlabel('$z$')
-        plt.ylabel('$\gamma$')
-        plt.legend(frameon=False, fontsize=12)
-        ax7.tick_params(axis='both', direction='in')
-        plt.savefig('gamma.png', dpi=500, format='png')
-        
-
-        
-        fig13 = plt.figure(13)
-        ax13 = fig13.add_subplot(111)
-        for j in range(len(A)):
-            plt.plot(DATA[2], DATA[30+NN*j], color=colors[2*j+2], linestyle=lines[1+j], \
-                     label='\emph{{STSQ}}  $z_c={0}$ $A={1} B={2}$'.format(zc, A[j], B[j]), linewidth=0.85)
-#        plt.plot(DATA[2], DATA[0], label='$WFIRST$ Aggregate Precision $1\sigma$', linewidth=0.85, color='b')
-#        plt.plot(DATA[2], 2*DATA[0], label='$WFIRST$ Aggregate Precision $2\sigma$', linewidth=0.85, color='g')
-        plt.hlines(0.0013, 0, DATA[2,0], label='$WFIRST$ Aggregate Precision $1\sigma$', linewidth=0.85, color='b')
-        plt.hlines(0.0026, 0, DATA[2,0], label='$WFIRST$ Aggregate Precision $2\sigma$', linewidth=0.85, color='g')
-        plt.xlim(left=0, right=3)
-        plt.xlabel('$z$')
-        plt.ylabel('$\mid \Delta \delta / \delta_{\Lambda} \mid$')
-        plt.legend(frameon=False, fontsize=10)
-        ax13.tick_params(axis='both', direction='in')
-        plt.savefig('gdiff.png', dpi=500, format='png')
+#        fig7 = plt.figure(7)
+#        ax7 = fig7.add_subplot(111)
+#        plt.hlines(0.54545454545, 0, DATA[2,0], color='k', label='$\Lambda$CDM Linder', linewidth=0.85)
+#        plt.plot(DATA[2], DATA[41], color='c', label='$\Lambda$CDM Numerical', linewidth=0.85)
+#        for j in range(len(A)):
+#            plt.plot(DATA[2], DATA[28+NN*j], color=colors[2*j+2],\
+#                     label='Numerical $z_c={0}$ $A={1} B={2}$'.format(zc, A[j], B[j]), linewidth=0.85)
+##        plt.hlines(0.530454545450, 0, 3, color='b', label='$WFIRST$ Aggregate Precision $1\sigma$', linewidth=0.85)
+##        plt.hlines(0.56045454545, 0, 3, color='b', linewidth=0.85)
+##        plt.hlines(0.57545454545, 0, 3, label='$WFIRST$ Aggregate Precision $2\sigma$', linewidth=0.85, color='g')
+##        plt.hlines(0.51545454545, 0, 3, linewidth=0.85, color='g')
+#        plt.xlim(left=0, right=zc+5)
+#        #plt.ylim(bottom=0.545, top=0.5555)
+#        plt.xlabel('$z$')
+#        plt.ylabel('$\gamma$')
+#        plt.legend(frameon=False, fontsize=12)
+#        ax7.tick_params(axis='both', direction='in')
+#        plt.savefig('gamma.png', dpi=500, format='png')
+#        
+#
+#        
+#        fig13 = plt.figure(13)
+#        ax13 = fig13.add_subplot(111)
+#        for j in range(len(A)):
+#            plt.plot(DATA[2], DATA[30+NN*j], color=colors[2*j+2], linestyle=lines[1+j], \
+#                     label='\emph{{STSQ}}  $z_c={0}$ $A={1} B={2}$'.format(zc, A[j], B[j]), linewidth=0.85)
+##        plt.plot(DATA[2], DATA[0], label='$WFIRST$ Aggregate Precision $1\sigma$', linewidth=0.85, color='b')
+##        plt.plot(DATA[2], 2*DATA[0], label='$WFIRST$ Aggregate Precision $2\sigma$', linewidth=0.85, color='g')
+#        plt.hlines(0.0013, 0, DATA[2,0], label='$WFIRST$ Aggregate Precision $1\sigma$', linewidth=0.85, color='b')
+#        plt.hlines(0.0026, 0, DATA[2,0], label='$WFIRST$ Aggregate Precision $2\sigma$', linewidth=0.85, color='g')
+#        plt.xlim(left=0, right=3)
+#        plt.xlabel('$z$')
+#        plt.ylabel('$\mid \Delta \delta / \delta_{\Lambda} \mid$')
+#        plt.legend(frameon=False, fontsize=10)
+#        ax13.tick_params(axis='both', direction='in')
+#        plt.savefig('gdiff.png', dpi=500, format='png')
 
 #        fig19 = plt.figure(19)
 #        ax19 = fig19.add_subplot(111)
@@ -300,14 +306,15 @@ def plot(plots, xc, Vc, zc, ai, da, A, B, order, DATA, NN):
 #        plt.savefig('densfrac.png', dpi=500, format='png')
         
         
-        
+##Plot the Field Value        
     if any(string == 'phi' for string in plots):
         fig11 = plt.figure(11)
         ax11 = fig11.add_subplot(111)
+        plt.plot([], [], ' ', label=lab1[j])
         plt.hlines(xc, 0, 1, label='\emph{STSQ} $\phi_c$', linewidth=0.85, color='k')
         for j in range(len(A)):
             plt.plot(DATA[1], DATA[8+NN*j], color=colors[2*j+2], linestyle=lines[1+j], \
-                    label=lab[j], linewidth=0.85)
+                    label=lab2[j], linewidth=0.85)
         plt.xlim(left=DATA[1,0], right=1)
         #plt.ylim(bottom=2.26*10**19, top=2.3*10**19)
         plt.xlabel('$a$')
@@ -318,14 +325,15 @@ def plot(plots, xc, Vc, zc, ai, da, A, B, order, DATA, NN):
         plt.savefig('phi.png', dpi=500, format='png')
 
         
-        
+##Plot the Field Potential in various ways        
     if any(string == 'V' for string in plots):
         fig12 = plt.figure(12)
         ax12 = fig12.add_subplot(111)
+        plt.plot([], [], ' ', label=lab1[j])
         plt.hlines(Vc, 0, 1, label='\emph{STSQ} $V_c$', linewidth=0.85, color='k')
         for j in range(len(A)):
             plt.plot(DATA[1], DATA[10+NN*j], color=colors[2*j+2], linestyle=lines[1+j], \
-                     label='$z_c={0}$ $A={1}$ $B={2}$'.format(zc, A[j], B[j]), linewidth=0.85)
+                     label=lab2[j], linewidth=0.85)
         plt.xlim(left=DATA[1,0], right=1)
         plt.ylim(bottom=2*10**-47, top=3*10**-47)
         plt.xlabel('$a$')
@@ -338,24 +346,29 @@ def plot(plots, xc, Vc, zc, ai, da, A, B, order, DATA, NN):
         
         fig17 = plt.figure(17)
         ax17 = fig17.add_subplot(111)
+        plt.plot([], [], ' ', label=lab1[j])
         for j in range(len(A)):
-            plt.plot(DATA[1], DATA[28+(j+1)*DEL], color=colors[2*j+2], linestyle=lines[1+j], \
-                     label='STSQ $z_c={0}$ $\eta={1}$'.format(zc, A[j]), linewidth=0.85)
-        plt.xlim(left=DATA[1,0], right=1)
-        #plt.ylim(bottom=0., top=0.3*10**-47.)
-        plt.xlabel('$\phi$')
-        plt.ylabel('$V(\phi)$')
-        plt.legend(frameon=False, fontsize='small')
+            plt.plot(DATA[8+NN*j], DATA[10+NN*j], color=colors[2*j+2], linestyle=lines[1+j], \
+                     label=lab2[j], linewidth=0.85)
+        plt.xlim(left=2.183*10**19, right=2.195*10**19)
+        plt.ylim(bottom=2*10**-47, top=5*10**-47)
+        plt.xlabel('$\phi [GeV]$')
+        plt.ylabel('$V(\phi)$ [$GeV^{4}$]')
+        plt.legend(frameon=False)
         ax17.tick_params(axis='both', direction='in')
+        format_label_string_with_exponent(ax17, axis='both')
         plt.savefig('Vphi.png', dpi=500, format='png')
-#        
+
+
+##Plot the Deceleration Parameter        
     if any(string == 'q' for string in plots):
         fig16 = plt.figure(16)
         ax16 = fig16.add_subplot(111)
+        plt.plot([], [], ' ', label=lab1[j])
         plt.plot(DATA[2], DATA[5], label='$\Lambda$CDM', linewidth=0.85, color='k')
         for j in range(len(A)):
             plt.plot(DATA[2], DATA[16+NN*j], color=colors[2*j+2], linestyle = lines[1+j],\
-                     label='$z_c={0}$ $A={1} B={2}$'.format(zc, A[j], B[j]), linewidth=0.85)
+                     label=lab2[j], linewidth=0.85)
         plt.xlim(left=0, right=5)
         plt.yticks(np.arange(-0.7, 0.7, step=0.2))
         plt.xlabel('$z$')
@@ -368,9 +381,10 @@ def plot(plots, xc, Vc, zc, ai, da, A, B, order, DATA, NN):
     if any(string == 'sc' for string in plots):
         fig18 = plt.figure(18)
         ax18 = fig18.add_subplot(111)
+        plt.plot([], [], ' ', label=lab1[j])
         for j in range(len(A)):
             plt.plot(DATA[2], DATA[27+NN*j], color=colors[2*j+2], linestyle=lines[1+j], \
-                     label='$z_c={0}$ $A={1} B={2}$'.format(zc, A[j], B[j]), linewidth=0.85)
+                     label=lab2[j], linewidth=0.85)
         plt.xlim(left=0, right=zc+3)
         plt.xlabel('$z$')
         plt.ylabel('$\\xi$')
@@ -396,7 +410,8 @@ def plot(plots, xc, Vc, zc, ai, da, A, B, order, DATA, NN):
         plt.savefig('ErrorTest.png', dpi=500, format='png')
         
         
-        
+ ##Better Axes labels
+       
 def update_label(old_label, exponent_text):
     if exponent_text == "":
         return old_label

@@ -10,10 +10,10 @@ Created on Tue Jul  9 13:44:54 2019
 """
 DEsimulator
 
-Main script for simualting Quintessence dark energy, specfically a novel field
-named Sharp Transition Scaling Quintessence, and comparing this with LCDM and
-a modified gravity model - Kinetic Gravity Braiding.
-
+Main script for simualting a novel Quintessence theory named Sharp Transition 
+Scaling Quintessence, and comparing this with LCDM using the Luminosity Distance
+dL. Intended to use the growth of matter density perturbations, but due to a high
+degree of nonlinearity the simple linear solution used here is not correct.
 @author: Charlie Mpetha
 """
 
@@ -42,7 +42,8 @@ H0 = 1.437722539*10.**-42.   ##Current value in GeV from Planck 2018
 #H0 = 1.535608363*10**-42.   ##Current value in GeV from Bonvin 2017
 Mpl = 2.4*10.**18.   ##Reduced Planck mass in GeV
 rhoc0 = 3.*(H0*Mpl)**2.   ##Current critical density
-OmegaM0, OmegaR0, OmegaDE0 = 0.3, 8.25*10**-5., 0.7   ##Current density fractions
+OmegaM0, OmegaR0, OmegaDE0 = 0.315, 8.25*10**-5., 0.685   ##Current density fractions
+##from Planck 2018 cosmological parameters
 rhode0 =  OmegaDE0*rhoc0   ##Current dark energy energy density
 rhom0 = OmegaM0*rhoc0   ##Current matter energy density                
 rhor0 = OmegaR0*rhoc0   ##Current raditation energy density
@@ -90,12 +91,14 @@ def usr_input():
         
         order = 1
         zc = 10   ##Crossover redshift
-        A = [0.1, 1]  ##Different values of STSQ free parameter eta
-        B = [0, 0]
+        A = [1.]  ##Different values of STSQ free parameters A and B
+        B = [0.]
         plots = ['w']   ##Which plots to produce
         
     else:
-        
+    
+        ##Use a first or second order taylor approximation for the function
+        ##f(phi) in STSQ
         while True:
             order = str(input('Order of Taylor series approximation (1 or 2) ?: \n'))
             if order.replace(".", "", 1).isdigit():
@@ -111,9 +114,8 @@ def usr_input():
 #                print('Order must be 1 or 2')
 #                continue
         
-        ##YOU MAY WISH TO CHANGE THIS SECTION TO MAKE IT MORE RELEVANT FOR
-        ##YOUR OWN QUINTESSENCE POTENTIAL. MULTIPLE VALUES OF A FREE
-        ##PARAMETER CAN BE STUDIED AT ONCE, WHILE A SECOND IS REMAINED FIXED.
+
+        ##Chose values of STSQ free parameters
         while True:
              zc = input('Crossover Redshift (max = 49), zc = ')
              if zc.replace(".", "", 1).isdigit():
@@ -153,8 +155,8 @@ def usr_input():
                 except ValueError:
                     continue
                 
-        
-        input_string = input('Which graphs? Seperate each choice with a space. \n  Equation of State:"w" Hubble:"H"  Luminosity Distance:"dL"   Growth function:"g"  Field Value:"phi"  Potential:"V"  Deceleration Parameter:"q"  Scaling:"sc"  Error Test:"Err"\n')
+        ##Select which graphs you wish to be displayed
+        input_string = input('Which graphs? Seperate each choice with a space. \n  Equation of State:"w" Hubble:"H"  Luminosity Distance:"dL"   Field Value:"phi"  Potential:"V"  Deceleration Parameter:"q"  Scaling:"sc"  Error Test:"Err"\n')
         
         plots = input_string.split()
         if any(val == 'exit' for val in plots):
@@ -171,22 +173,21 @@ def usr_input():
 ###############################################################################
 
 ##The worker module contains all the computation required for each user defined 
-##value of eta for STSQ or n for KGB. This setup allows each different model
-##to be simulated simuLtaneously - making use of available computing power and saving time.
+##value of A and B for STSQ. This setup allows each different model to be
+##simulated simuLtaneously - making use of available computing power and saving time.
 
 
     
-def worker(j, A, B, zc, order, plots):   #
+def worker(j, A, B, zc, order, plots):   
     #Create loop over all code so that it can be parallelised  
-    ##Each worker performs calculations for each user-defined eta/nKGB      
+    ##Each worker performs calculations for each user-defined A and B     
 
     ac = 1./(1.+zc)   ##Crossover scalefactor
     Vc = rhode0   ##Critical potential
     l = ((6.*Vc + 3.*rhom0*(1.+zc)**3.)/(2.*Vc))**0.5   ##model dependent constant
     xc = (Mpl/l)*np.log(Mpl**4. / rhode0)   ##Critical field value   
         
-    ##STSQ INITIAL CONDITIONS - MUST BE CHANGED ON CHANGING QUINTESSENCE 
-    ##POTENTIAL                               
+    ##STSQ Initial conditions                          
     xi = (Mpl/l)*np.log(((Mpl**4.)/(rhode0))*(ai/ac)**3.)   ##Initial field value                            
     yi = (2.*np.exp(np.log(Mpl**4.) - l*xi/Mpl))**0.5   ##Initial derivative
     
@@ -198,10 +199,8 @@ def worker(j, A, B, zc, order, plots):   #
     def f(x, y, u, v, ul, vl, a):   ##Calculates useful parameters                
         
         
-        ##CHANGE THE FOLLOWING POTENTIAL TO CHANGE THE QUINTESSENCE MODEL
-        ##BEING STUDIED. N.B.ALSO CHANGE INITIAL CONDITIONS FUTHER UP
+      
         def V(x):   ##Function for the STSQ potential and its derivative
-                    ##Potetial can be changed for any Scalar Field model
             if order == 1. :                                   
                 if x < xc:
                     return (Mpl**4.)*np.exp(-l*x/Mpl), \
